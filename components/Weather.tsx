@@ -189,12 +189,11 @@ export default function Home() {
           className="chartOption"
           name=""
           id=""
-          key={countryName}
           value={countryName}
           onChange={(e) => setCountryName(e.currentTarget.value)}
         >
-          {countryList.map((item) => (
-            <option value={item} key={item}>
+          {countryList.map((item, index) => (
+            <option value={item} key={index}>
               {item}
             </option>
           ))}
@@ -205,14 +204,13 @@ export default function Home() {
       {cityList ? (
         <select
           className="chartOption"
-          key={cityName}
           name=""
           id=""
           value={cityName}
           onChange={(e) => setCityName(e.currentTarget.value)}
         >
-          {cityList.map((item) => (
-            <option value={item} key={item}>
+          {cityList.map((item, index) => (
+            <option value={item} key={index}>
               {item}
             </option>
           ))}
