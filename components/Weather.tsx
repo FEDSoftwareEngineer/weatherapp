@@ -57,7 +57,6 @@ export default function Home() {
   };
   const getData = async (): Promise<void> => {
     try {
-      console.log("started getData");
       const response: Response = await fetch("/worldcities.csv");
       const textData: string = await response.text();
       const rows: string[] = textData.split("\n");
@@ -70,7 +69,6 @@ export default function Home() {
         countries.add(item[4]);
       });
       setCountryList(Array.from(countries).sort());
-      console.log("finished getData");
     } catch (err) {
       console.log(err);
     }
@@ -78,7 +76,6 @@ export default function Home() {
   const getCityData = async (): Promise<void> => {
     try {
       if (info.length !== 0) {
-        console.log("started getCityData");
         const lat: number = parseFloat(info[2]);
         const lon: number = parseFloat(info[3]);
         setCountryName(info[4]);
@@ -100,7 +97,6 @@ export default function Home() {
         setCityData(data);
         setIsLoading(false);
         setCountryCode(info[5]);
-        console.log("finished getCityData");
       }
     } catch (err) {
       console.log("this is the tryCatch error:", err);
