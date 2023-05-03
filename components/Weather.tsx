@@ -17,7 +17,7 @@ export default function Home() {
   const [cityName, setCityName] = useState<string>("");
   const [countryName, setCountryName] = useState<string>("");
   const [info, setInfo] = useState<string[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [countryList, setCountryList] = useState<string[]>([]);
   const [cityList, setCityList] = useState<string[]>([]);
   const [countryCode, setCountryCode] = useState<string>("");
@@ -25,7 +25,9 @@ export default function Home() {
   //color functionalit
   const getCity = (value: string) => {
     if (data) {
-      const city = data.find((item) => item.includes(value));
+      const city: string[] | undefined = data.find((item) =>
+        item.includes(value)
+      );
       if (city) {
         return city;
       }
@@ -48,22 +50,18 @@ export default function Home() {
   };
 
   //getting data and api
-  const userLocation = async (): Promise<void> => {
-    try {
-      const response = await fetch("/api/userlocation");
-      const location = await response.json();
-      setCountryName(location.country);
-      if (cityList.includes(location.city)) setCityName(location.city);
-    } catch (err) {
-      console.log("location error:", err);
-    }
+  const initialData = (): void => {
+    setCountryName("Iran");
+    setCityName("Tehran");
+    setInfo(getCity("Tehran"));
   };
   const getData = async (): Promise<void> => {
     try {
-      const response = await fetch("/worldcities.csv");
-      const textData = await response.text();
-      const rows = textData.split("\n");
-      const data = rows.map((row) =>
+      console.log("started getData");
+      const response: Response = await fetch("/worldcities.csv");
+      const textData: string = await response.text();
+      const rows: string[] = textData.split("\n");
+      const data: string[][] = rows.map((row) =>
         row.split(",").map((cell) => cell.replace(/^"|"$/g, ""))
       );
       setData(data);
@@ -72,6 +70,7 @@ export default function Home() {
         countries.add(item[4]);
       });
       setCountryList(Array.from(countries).sort());
+      console.log("finished getData");
     } catch (err) {
       console.log(err);
     }
@@ -79,14 +78,17 @@ export default function Home() {
   const getCityData = async (): Promise<void> => {
     try {
       if (info.length !== 0) {
-        const lat = parseFloat(info[2]);
-        const lon = parseFloat(info[3]);
+        console.log("started getCityData");
+        const lat: number = parseFloat(info[2]);
+        const lon: number = parseFloat(info[3]);
         setCountryName(info[4]);
-        const response = await fetch(
+        const response: Response = await fetch(
           `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=temperature_2m`
         );
-        const Data = await response.json();
-        let time = Data.hourly.time.map((date: string) => date.split("T")[1]);
+        const Data: any = await response.json();
+        let time: string[] = Data.hourly.time.map(
+          (date: string) => date.split("T")[1]
+        );
         let data: city = {
           time: time.slice(0, 24),
           temperature_2m: Data.hourly.temperature_2m.slice(0, 24),
@@ -98,6 +100,7 @@ export default function Home() {
         setCityData(data);
         setIsLoading(false);
         setCountryCode(info[5]);
+        console.log("finished getCityData");
       }
     } catch (err) {
       console.log("this is the tryCatch error:", err);
@@ -107,7 +110,9 @@ export default function Home() {
   //updating city and country list
   const updateLists = (): void => {
     if (data) {
-      const city = data.filter((item) => item.includes(countryName));
+      const city: string[][] = data.filter((item) =>
+        item.includes(countryName)
+      );
       if (city) {
         setCityName(city[0][0]);
         const list: string[] = city.map((item) => item[0]);
@@ -118,9 +123,13 @@ export default function Home() {
 
   //getting the csv data
   useEffect(() => {
-    userLocation();
-    updateLists();
-    getData();
+    const start = async () => {
+      await getData();
+      await initialData();
+      await updateLists();
+      await getCityData();
+    };
+    start();
   }, []);
   //getting 2d array of cities
   useEffect(() => {
