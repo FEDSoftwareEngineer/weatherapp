@@ -51,6 +51,7 @@ export default function Home() {
 
   //getting data and api
   const initialData = (): void => {
+    setCountryCode("IR");
     setCountryName("Iran");
     setCityName("Tehran");
     setInfo(getCity("Tehran"));
@@ -193,7 +194,7 @@ export default function Home() {
           onChange={(e) => setCountryName(e.currentTarget.value)}
         >
           {countryList.map((item, index) => (
-            <option value={item} key={index}>
+            <option value={item} key={item + index}>
               {item}
             </option>
           ))}
@@ -210,7 +211,7 @@ export default function Home() {
           onChange={(e) => setCityName(e.currentTarget.value)}
         >
           {cityList.map((item, index) => (
-            <option value={item} key={index}>
+            <option value={item} key={item + index}>
               {item}
             </option>
           ))}
