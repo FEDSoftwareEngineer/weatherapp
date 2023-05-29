@@ -269,15 +269,19 @@ export default function Home() {
             ""
           )}
         </div>
-        <div
-          onClick={() => {
-            setDarkmode(!darkmode);
-          }}
-          className="w-32 h-12 hidden sm:block dark:border-slate-400 border-slate-600 border-2 rounded-3xl overflow-hidden flex cursor-pointer dark:bg-sky-400 "
-        >
-          <div className="w-16 h-11 bg-black rounded-full transition duration-300 dark:translate-x-16"></div>
+        <div className="text-center">
+          <h1>Dark Mode</h1>
+          <div
+            onClick={() => {
+              setDarkmode(!darkmode);
+            }}
+            className="w-32 h-12 hidden sm:block dark:border-slate-400 border-slate-600 border-2 rounded-3xl overflow-hidden flex cursor-pointer dark:bg-sky-400 "
+          >
+            <div className="w-16 h-11 bg-black rounded-full transition duration-300 dark:translate-x-16"></div>
+          </div>
         </div>
       </div>
+
       {isLoading ? "" : <canvas id="myChart" ref={ctx}></canvas>}
 
       <div className="h-64 w-full flex flex-col justify-center items-center sm:hidden">
