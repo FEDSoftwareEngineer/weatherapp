@@ -1,75 +1,12 @@
-a {
-  text-decoration: none;
-}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-.container {
-  padding: 0 10%;
-}
-
-.textCenter {
-  text-align: center;
-}
-
-.chartOption {
-  background-color: rgb(0, 162, 255);
-  color: white;
-  height: 30px;
-  border-radius: 5px;
-  font-size: 0.8rem;
-  font-weight: 600;
-}
-.chartOption:focus {
-  outline: none;
-}
-
-.chartOption::-webkit-scrollbar {
-  background-color: transparent;
-  width: 5px;
-}
-.chartOption::-webkit-scrollbar-thumb {
-  background-color: #000000;
-  border-radius: 10px;
-}
-
-.bg {
-  height: 90vh;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.loading {
-  width: 60px;
-  height: 60px;
-  animation: rotate 1s infinite;
-}
-.title {
-  font-size: 2rem;
-  margin-top: 40px;
-}
-.description {
-  font-size: 1.2rem;
-  margin-bottom: 60px;
-}
-.space {
-  margin-bottom: 50px;
-}
-@media (max-width: 600px) {
-  .container {
-    padding: 0 10px;
+@layer base {
+  body {
+    @apply dark:bg-slate-800 dark:text-white;
   }
-  .title {
-    font-size: 1.5rem;
-  }
-  .description {
-    font-size: 1rem;
-  }
-}
-@keyframes rotate {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
+  select {
+    @apply border-2 border-blue-900 rounded-md dark:bg-sky-500 bg-blue-500 text-white focus:outline-none;
   }
 }

@@ -24,7 +24,7 @@ const Clock = ({ countryCode }: ClockProps) => {
 
   return (
     <>
-      <h1 className="textCenter">
+      <h1 className="text-center text-3xl">
         {time.toLocaleTimeString("en-US", { timeZone })}
       </h1>
     </>

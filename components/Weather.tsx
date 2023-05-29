@@ -21,6 +21,8 @@ export default function Home() {
   const [countryList, setCountryList] = useState<string[]>([]);
   const [cityList, setCityList] = useState<string[]>([]);
   const [countryCode, setCountryCode] = useState<string>("");
+  const [darkmode, setDarkmode] = useState<boolean>(true);
+  const [aspect, setAspect] = useState<number>(2.2);
 
   //color functionalit
   const getCity = (value: string) => {
@@ -118,6 +120,25 @@ export default function Home() {
     }
   };
 
+  //resize event listener
+
+  useEffect(() => {
+    window.addEventListener("resize", () => {
+      window.innerWidth < 600 ? setAspect(1) : setAspect(2.2);
+      console.log(window.innerWidth);
+    });
+  }, []);
+  //dark mode detectors
+
+  useEffect(() => {
+    if (window !== undefined) {
+      if (darkmode) {
+        window.document.documentElement.classList.add("dark");
+      } else {
+        window.document.documentElement.classList.remove("dark");
+      }
+    }
+  }, [darkmode]);
   //getting the csv data
   useEffect(() => {
     const start = async () => {
@@ -165,11 +186,37 @@ export default function Home() {
           ],
         },
         options: {
+          aspectRatio: aspect,
+          plugins: {
+            legend: {
+              labels: {
+                color: darkmode ? "rgba(255,255,255,0.8)" : "",
+              },
+            },
+          },
           scales: {
             y: {
               beginAtZero: false,
               ticks: {
                 callback: (value) => value + "°",
+                color: darkmode ? "rgba(255,255,255,0.8)" : "",
+                font: {
+                  size: 14,
+                },
+              },
+              grid: {
+                color: darkmode ? "rgba(255,255,255,0.1)" : "rgba(1,1,1,0.1)",
+              },
+            },
+            x: {
+              grid: {
+                color: darkmode ? "rgba(255,255,255,0.1)" : "rgba(1,1,1,0.1)",
+              },
+              ticks: {
+                color: darkmode ? "rgba(255,255,255,0.8)" : "",
+                font: {
+                  size: 14,
+                },
               },
             },
           },
@@ -178,48 +225,72 @@ export default function Home() {
     return () => {
       if (myChart) myChart.destroy();
     };
-  }, [cityData, info]);
+  }, [cityData, info, darkmode, aspect]);
 
   if (!data || !cityList || !countryList || !cityData || !info)
     return <Loading />;
   return (
-    <div>
+    <div className="flex flex-col my-3 md:w-[66rem] mx-auto">
       <Clock countryCode={countryCode} />
-      {countryList ? (
-        <select
-          className="chartOption"
-          name=""
-          id=""
-          value={countryName}
-          onChange={(e) => setCountryName(e.currentTarget.value)}
+      <div className="flex justify-between my-12 md:mb-0">
+        <div>
+          {countryList ? (
+            <select
+              className="block mb-1 text-md font-semibold p-1"
+              name=""
+              id=""
+              value={countryName}
+              onChange={(e) => setCountryName(e.currentTarget.value)}
+            >
+              {countryList.map((item, index) => (
+                <option value={item} key={item + index}>
+                  {item}
+                </option>
+              ))}
+            </select>
+          ) : (
+            ""
+          )}
+          {cityList ? (
+            <select
+              className="block p-1"
+              name=""
+              id=""
+              value={cityName}
+              onChange={(e) => setCityName(e.currentTarget.value)}
+            >
+              {cityList.map((item, index) => (
+                <option value={item} key={item + index}>
+                  {item}
+                </option>
+              ))}
+            </select>
+          ) : (
+            ""
+          )}
+        </div>
+        <div
+          onClick={() => {
+            setDarkmode(!darkmode);
+          }}
+          className="w-32 h-12 hidden sm:block dark:border-slate-400 border-slate-600 border-2 rounded-3xl overflow-hidden flex cursor-pointer dark:bg-sky-400 "
         >
-          {countryList.map((item, index) => (
-            <option value={item} key={item + index}>
-              {item}
-            </option>
-          ))}
-        </select>
-      ) : (
-        ""
-      )}
-      {cityList ? (
-        <select
-          className="chartOption"
-          name=""
-          id=""
-          value={cityName}
-          onChange={(e) => setCityName(e.currentTarget.value)}
-        >
-          {cityList.map((item, index) => (
-            <option value={item} key={item + index}>
-              {item}
-            </option>
-          ))}
-        </select>
-      ) : (
-        ""
-      )}
+          <div className="w-16 h-11 bg-black rounded-full transition duration-300 dark:translate-x-16"></div>
+        </div>
+      </div>
       {isLoading ? "" : <canvas id="myChart" ref={ctx}></canvas>}
+
+      <div className="h-64 w-full flex flex-col justify-center items-center sm:hidden">
+        <h1>Dark Mode</h1>
+        <div
+          onClick={() => {
+            setDarkmode(!darkmode);
+          }}
+          className="w-32 h-12 dark:border-slate-400 border-slate-600 border-2 rounded-3xl overflow-hidden flex cursor-pointer dark:bg-sky-400 "
+        >
+          <div className="w-16 h-11 bg-black rounded-full transition duration-300 dark:translate-x-16"></div>
+        </div>
+      </div>
     </div>
   );
 }
