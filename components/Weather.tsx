@@ -123,10 +123,13 @@ export default function Home() {
   //resize event listener
 
   useEffect(() => {
-    window.addEventListener("resize", () => {
+    if (window !== undefined) {
       window.innerWidth < 600 ? setAspect(1) : setAspect(2.2);
-      console.log(window.innerWidth);
-    });
+      window.addEventListener("resize", () => {
+        window.innerWidth < 600 ? setAspect(1) : setAspect(2.2);
+        console.log(window.innerWidth);
+      });
+    }
   }, []);
   //dark mode detectors
 
@@ -269,13 +272,13 @@ export default function Home() {
             ""
           )}
         </div>
-        <div className="text-center">
+        <div className="text-center hidden sm:block">
           <h1>Dark Mode</h1>
           <div
             onClick={() => {
               setDarkmode(!darkmode);
             }}
-            className="w-32 h-12 hidden sm:block dark:border-slate-400 border-slate-600 border-2 rounded-3xl overflow-hidden flex cursor-pointer dark:bg-sky-400 "
+            className="w-32 h-12 dark:border-slate-400 border-slate-600 border-2 rounded-3xl overflow-hidden flex cursor-pointer dark:bg-sky-400 "
           >
             <div className="w-16 h-11 bg-black rounded-full transition duration-300 dark:translate-x-16"></div>
           </div>
