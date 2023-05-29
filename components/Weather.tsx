@@ -124,9 +124,9 @@ export default function Home() {
 
   useEffect(() => {
     if (window !== undefined) {
-      window.innerWidth < 600 ? setAspect(1) : setAspect(2.2);
+      window.innerWidth < 600 ? setAspect(1.3) : setAspect(2.2);
       window.addEventListener("resize", () => {
-        window.innerWidth < 600 ? setAspect(1) : setAspect(2.2);
+        window.innerWidth < 600 ? setAspect(1.3) : setAspect(2.2);
         console.log(window.innerWidth);
       });
     }
@@ -235,8 +235,8 @@ export default function Home() {
   return (
     <div className="flex flex-col my-3 md:w-[66rem] mx-auto">
       <Clock countryCode={countryCode} />
-      <div className="flex justify-between my-12 md:mb-0">
-        <div>
+      <div className="flex justify-center sm:justify-between my-6 sm:mb-0">
+        <div className="flex flex-col justify-center items-center">
           {countryList ? (
             <select
               className="block mb-1 text-md font-semibold p-1"
@@ -287,7 +287,7 @@ export default function Home() {
 
       {isLoading ? "" : <canvas id="myChart" ref={ctx}></canvas>}
 
-      <div className="h-64 w-full flex flex-col justify-center items-center sm:hidden">
+      <div className="h-32 w-full flex flex-col justify-center items-center sm:hidden">
         <h1>Dark Mode</h1>
         <div
           onClick={() => {
