@@ -124,10 +124,11 @@ export default function Home() {
 
   useEffect(() => {
     if (window !== undefined) {
-      window.innerWidth < 600 ? setAspect(1.3) : setAspect(2.2);
+      window.innerWidth < window.innerHeight ? setAspect(1.3) : setAspect(2.2);
       window.addEventListener("resize", () => {
-        window.innerWidth < 600 ? setAspect(1.3) : setAspect(2.2);
-        console.log(window.innerWidth);
+        window.innerWidth < window.innerHeight
+          ? setAspect(1.3)
+          : setAspect(2.2);
       });
     }
   }, []);
@@ -233,13 +234,13 @@ export default function Home() {
   if (!data || !cityList || !countryList || !cityData || !info)
     return <Loading />;
   return (
-    <div className="flex flex-col my-3 md:w-[66rem] mx-auto">
+    <div className="flex flex-col my-3 lg:w-[66rem] mx-auto">
       <Clock countryCode={countryCode} />
-      <div className="flex justify-center sm:justify-between my-6 sm:mb-0">
-        <div className="flex flex-col justify-center items-center">
+      <div className="flex justify-center lg:justify-between my-6 lg:mb-0">
+        <div className="flex flex-col justify-center items-center lg:items-start">
           {countryList ? (
             <select
-              className="block mb-1 text-md font-semibold p-1"
+              className="block mb-1 text-lg font-semibold p-1"
               name=""
               id=""
               value={countryName}
@@ -272,7 +273,7 @@ export default function Home() {
             ""
           )}
         </div>
-        <div className="text-center hidden sm:block">
+        <div className="text-center hidden lg:block">
           <h1>Dark Mode</h1>
           <div
             onClick={() => {
@@ -287,7 +288,7 @@ export default function Home() {
 
       {isLoading ? "" : <canvas id="myChart" ref={ctx}></canvas>}
 
-      <div className="h-32 w-full flex flex-col justify-center items-center sm:hidden">
+      <div className="h-32 w-full flex flex-col justify-center items-center lg:hidden">
         <h1>Dark Mode</h1>
         <div
           onClick={() => {
