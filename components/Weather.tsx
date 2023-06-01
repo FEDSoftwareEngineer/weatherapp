@@ -114,7 +114,7 @@ export default function Home() {
       );
       if (city) {
         setCityName(city[0][0]);
-        const list: string[] = city.map((item) => item[0]);
+        const list: string[] = city.map((item) => item[7] + " - " + item[0]);
         setCityList(list.sort());
       }
     }
