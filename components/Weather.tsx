@@ -25,10 +25,10 @@ export default function Home() {
   const [aspect, setAspect] = useState<number>(2.2);
 
   //color functionalit
-  const getCity = (value: string) => {
+  const getCity = (mCity: string, mCountry: string) => {
     if (data) {
-      const city: string[] | undefined = data.find((item) =>
-        item.includes(value)
+      const city: string[] | undefined = data.find(
+        (item) => item.includes(mCity) && item.includes(mCountry)
       );
       if (city) {
         return city;
@@ -56,7 +56,7 @@ export default function Home() {
     setCountryCode("IR");
     setCountryName("Iran");
     setCityName("Tehran");
-    setInfo(getCity("Tehran"));
+    setInfo(getCity("Tehran", "Iran"));
   };
   const getData = async (): Promise<void> => {
     try {
@@ -163,7 +163,7 @@ export default function Home() {
 
   // getting the info useEffect
   useEffect(() => {
-    setInfo(getCity(cityName));
+    setInfo(getCity(cityName, countryName));
   }, [cityName]); // cityData data deleted
 
   //useEffect for when the country changes but the city doesnt
