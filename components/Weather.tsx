@@ -9,20 +9,18 @@ interface city {
   temperature_2m: number[];
 }
 
-interface HomeProps {
-  data: string[][];
-}
-
-export default function Weather({ data }: any) {
+export default function Home() {
+  //initial data
+  const [data, setData] = useState<string[][]>();
   const [cityData, setCityData] = useState<city>();
   const [color, setColor] = useState<string[]>();
-  const [cityName, setCityName] = useState<string>("Tehrān - Tehran");
-  const [countryName, setCountryName] = useState<string>("Iran");
+  const [cityName, setCityName] = useState<string>("");
+  const [countryName, setCountryName] = useState<string>("");
   const [info, setInfo] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [countryList, setCountryList] = useState<string[]>([]);
   const [cityList, setCityList] = useState<string[]>([]);
-  const [countryCode, setCountryCode] = useState<string>("IR");
+  const [countryCode, setCountryCode] = useState<string>("");
   const [darkmode, setDarkmode] = useState<boolean>(true);
   const [aspect, setAspect] = useState<number>(2.2);
 
@@ -30,7 +28,7 @@ export default function Weather({ data }: any) {
   const getCity = (mCity: string, mCountry: string) => {
     if (data) {
       const city: string[] | undefined = data.find(
-        (item: string) => item.includes(mCity) && item.includes(mCountry)
+        (item) => item.includes(mCity) && item.includes(mCountry)
       );
       if (city) {
         return city;
@@ -60,12 +58,23 @@ export default function Weather({ data }: any) {
     setCityName("Tehran");
     setInfo(getCity("Tehran", "Iran"));
   };
-  const getData = () => {
-    let countries: Set<string> = new Set();
-    data?.forEach((item: string) => {
-      countries.add(item[4]);
-    });
-    setCountryList(Array.from(countries).sort());
+  const getData = async (): Promise<void> => {
+    try {
+      const response: Response = await fetch("/worldcities.csv");
+      const textData: string = await response.text();
+      const rows: string[] = textData.split("\n");
+      const data: string[][] = rows.map((row) =>
+        row.split(",").map((cell) => cell.replace(/^"|"$/g, ""))
+      );
+      setData(data);
+      let countries: Set<string> = new Set();
+      data.forEach((item) => {
+        countries.add(item[4]);
+      });
+      setCountryList(Array.from(countries).sort());
+    } catch (err) {
+      console.log(err);
+    }
   };
   const getCityData = async (): Promise<void> => {
     try {
@@ -80,15 +89,15 @@ export default function Weather({ data }: any) {
         let time: string[] = Data.hourly.time.map(
           (date: string) => date.split("T")[1]
         );
-        let datacity: city = {
+        let data: city = {
           time: time.slice(0, 24),
           temperature_2m: Data.hourly.temperature_2m.slice(0, 24),
         };
-        let backgroundcolor: string[] = datacity.temperature_2m.map((item) =>
+        let backgroundcolor: string[] = data.temperature_2m.map((item) =>
           getColor(item)
         );
         setColor(backgroundcolor);
-        setCityData(datacity);
+        setCityData(data);
         setIsLoading(false);
         setCountryCode(info[5]);
       }
@@ -100,7 +109,7 @@ export default function Weather({ data }: any) {
   //updating city and country list
   const updateLists = (): void => {
     if (data) {
-      const city: string[][] = data.filter((item: string) =>
+      const city: string[][] = data.filter((item) =>
         item.includes(countryName)
       );
       if (city) {
@@ -136,11 +145,13 @@ export default function Weather({ data }: any) {
   }, [darkmode]);
   //getting the csv data
   useEffect(() => {
-    initialData();
-    getData();
-    updateLists();
-    getCityData();
-    if (data) console.log(data);
+    const start = async () => {
+      await getData();
+      await initialData();
+      await updateLists();
+      await getCityData();
+    };
+    start();
   }, []);
   //getting 2d array of cities
   useEffect(() => {
