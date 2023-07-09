@@ -1,7 +1,20 @@
 import Head from "next/head";
 import Weather from "../components/Weather";
 
-export default function Home() {
+export async function getServerSideProps() {
+  const url =
+    process.env.NODE_ENV === "production"
+      ? "https://webdegan-weatherapp.netlify.app"
+      : "http://localhost:3000/api/data";
+  console.log("hello");
+  const response = await fetch(url);
+  const json = await response.json();
+  const data = json.data;
+
+  return { props: { data } };
+}
+
+export default function Home({ data }: any) {
   return (
     <>
       <Head>
@@ -14,7 +27,7 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div className="container mx-auto">
-        <Weather />
+        <Weather data={data} />
       </div>
     </>
   );
