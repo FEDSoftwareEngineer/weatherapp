@@ -1,6 +1,4 @@
 import Head from "next/head";
-
-//components
 import Weather from "../components/Weather";
 
 export default function Home() {
