@@ -8,33 +8,53 @@ interface city {
   time: string[];
   temperature_2m: number[];
 }
-
+interface c {
+  city: string;
+  city_ascii: string;
+  lat: number;
+  lng: number;
+  country: string;
+  iso2: string;
+  iso3: string;
+  admin_name: string;
+  capital: string;
+  population: number;
+  id: number;
+}
 export default function Home() {
   //initial data
-  const [data, setData] = useState<string[][]>();
+  const url =
+    process.env.NODE_ENV === "production"
+      ? process.env.NEXT_URL
+      : "http://localhost:3000";
   const [cityData, setCityData] = useState<city>();
   const [color, setColor] = useState<string[]>();
-  const [cityName, setCityName] = useState<string>("");
-  const [countryName, setCountryName] = useState<string>("");
-  const [info, setInfo] = useState<string[]>([]);
+  const [cityName, setCityName] = useState<string>("Tehran");
+  const [countryName, setCountryName] = useState<string>("Iran");
+  const [info, setInfo] = useState<c>();
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [countryList, setCountryList] = useState<string[]>([]);
   const [cityList, setCityList] = useState<string[]>([]);
-  const [countryCode, setCountryCode] = useState<string>("");
+  const [countryCode, setCountryCode] = useState<string>("IR");
   const [darkmode, setDarkmode] = useState<boolean>(true);
   const [aspect, setAspect] = useState<number>(2.2);
 
   //color functionalit
-  const getCity = (mCity: string, mCountry: string) => {
-    if (data) {
-      const city: string[] | undefined = data.find(
-        (item) => item.includes(mCity) && item.includes(mCountry)
-      );
-      if (city) {
-        return city;
-      }
-    }
-    return [];
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await fetch(`${url}/api/countries`);
+      const data = await response.json();
+      setCountryList(data);
+    };
+    fetchData();
+  }, []);
+  const getCity = async (mCity: string, mCountry: string): Promise<c> => {
+    const response = await fetch(
+      `${url}/api/data/?country=${mCountry}&city=${mCity}`
+    );
+    const city = await response.json();
+    return city;
   };
   const getColor = (value: number): string => {
     if (value >= 50) return "rgb(49, 0, 39)";
@@ -52,38 +72,23 @@ export default function Home() {
   };
 
   //getting data and api
-  const initialData = (): void => {
+  const initialData = async (): Promise<void> => {
     setCountryCode("IR");
     setCountryName("Iran");
+    const response = await fetch(`${url}/api/data/?country=Iran`);
+    const currentData = await response.json();
+    const list: string[] = currentData.map((item: any) => item.city);
+    setCityList(list.sort());
     setCityName("Tehran");
-    setInfo(getCity("Tehran", "Iran"));
+    setInfo(await getCity("Tehran", "Iran"));
   };
-  const getData = async (): Promise<void> => {
-    try {
-      const response: Response = await fetch("/worldcities.csv");
-      const textData: string = await response.text();
-      const rows: string[] = textData.split("\n");
-      const data: string[][] = rows.map((row) =>
-        row.split(",").map((cell) => cell.replace(/^"|"$/g, ""))
-      );
-      setData(data);
-      let countries: Set<string> = new Set();
-      data.forEach((item) => {
-        countries.add(item[4]);
-      });
-      setCountryList(Array.from(countries).sort());
-    } catch (err) {
-      console.log(err);
-    }
-  };
+
   const getCityData = async (): Promise<void> => {
     try {
-      if (info.length !== 0) {
-        const lat: number = parseFloat(info[2]);
-        const lon: number = parseFloat(info[3]);
-        setCountryName(info[4]);
+      if (info) {
+        setCountryName(info.country);
         const response: Response = await fetch(
-          `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=temperature_2m`
+          `https://api.open-meteo.com/v1/forecast?latitude=${info.lat}&longitude=${info.lng}&hourly=temperature_2m`
         );
         const Data: any = await response.json();
         let time: string[] = Data.hourly.time.map(
@@ -99,7 +104,7 @@ export default function Home() {
         setColor(backgroundcolor);
         setCityData(data);
         setIsLoading(false);
-        setCountryCode(info[5]);
+        setCountryCode(info.iso2);
       }
     } catch (err) {
       console.log("this is the tryCatch error:", err);
@@ -107,18 +112,25 @@ export default function Home() {
   };
 
   //updating city and country list
-  const updateLists = (): void => {
-    if (data) {
-      const city: string[][] = data.filter((item) =>
-        item.includes(countryName)
-      );
-      if (city) {
-        setCityName(city[0][0]);
-        const list: string[] = city.map((item) => item[7] + " - " + item[0]);
-        setCityList(list.sort());
-      }
+  const updateLists = async (): Promise<void> => {
+    const response = await fetch(`${url}/api/data/?country=${countryName}`);
+    const city: any = await response.json();
+    if (city && city.length > 0) {
+      const currentData: string[] = city.map((item: any) => item.city);
+      const list = currentData.sort();
+      setCityName(list[0]);
+      setCityList(list.sort());
     }
   };
+
+  useEffect(() => {
+    const start = async () => {
+      // await getData();
+      await getCityData();
+      initialData();
+    };
+    start();
+  }, []);
 
   //resize event listener
 
@@ -143,16 +155,7 @@ export default function Home() {
       }
     }
   }, [darkmode]);
-  //getting the csv data
-  useEffect(() => {
-    const start = async () => {
-      await getData();
-      await initialData();
-      await updateLists();
-      await getCityData();
-    };
-    start();
-  }, []);
+
   //getting 2d array of cities
   useEffect(() => {
     getCityData();
@@ -163,7 +166,10 @@ export default function Home() {
 
   // getting the info useEffect
   useEffect(() => {
-    setInfo(getCity(cityName, countryName));
+    const run = async () => {
+      setInfo(await getCity(cityName, countryName));
+    };
+    run();
   }, [cityName]); // cityData data deleted
 
   //useEffect for when the country changes but the city doesnt
@@ -174,7 +180,7 @@ export default function Home() {
 
   //chart useEffect
   useEffect(() => {
-    if (info.length !== 0 && data && cityData && cityName) setIsLoading(false);
+    if (info && cityData && cityName) setIsLoading(false);
     if (ctx.current)
       myChart = new Chart(ctx.current, {
         type: "bar",
@@ -229,10 +235,9 @@ export default function Home() {
     return () => {
       if (myChart) myChart.destroy();
     };
-  }, [cityData, info, darkmode, aspect]);
+  }, [countryName, cityName, darkmode, aspect]);
 
-  if (!data || !cityList || !countryList || !cityData || !info)
-    return <Loading />;
+  if (!cityList || !countryList || !cityData || !info) return <Loading />;
   return (
     <div className="flex flex-col my-3 lg:w-[66rem] mx-auto">
       <Clock countryCode={countryCode} />
