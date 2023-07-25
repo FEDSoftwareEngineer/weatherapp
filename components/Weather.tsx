@@ -43,7 +43,7 @@ export default function Home() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await fetch(`${url}/api/countries`);
+      const response = await fetch(`/api/countries`);
       const data = await response.json();
       setCountryList(data);
     };
@@ -51,7 +51,7 @@ export default function Home() {
   }, []);
   const getCity = async (mCity: string, mCountry: string): Promise<c> => {
     const response = await fetch(
-      `${url}/api/data/?country=${mCountry}&city=${mCity}`
+      `/api/data/?country=${mCountry}&city=${mCity}`
     );
     const city = await response.json();
     return city;
@@ -75,7 +75,7 @@ export default function Home() {
   const initialData = async (): Promise<void> => {
     setCountryCode("IR");
     setCountryName("Iran");
-    const response = await fetch(`${url}/api/data/?country=Iran`);
+    const response = await fetch(`/api/data/?country=Iran`);
     const currentData = await response.json();
     const list: string[] = currentData.map((item: any) => item.city);
     setCityList(list.sort());
@@ -113,7 +113,7 @@ export default function Home() {
 
   //updating city and country list
   const updateLists = async (): Promise<void> => {
-    const response = await fetch(`${url}/api/data/?country=${countryName}`);
+    const response = await fetch(`/api/data/?country=${countryName}`);
     const city: any = await response.json();
     if (city && city.length > 0) {
       const currentData: string[] = city.map((item: any) => item.city);
