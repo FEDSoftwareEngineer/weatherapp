@@ -19,11 +19,15 @@ export default async function handler(
     }
 
     if (value.country && value.city) {
-      const country = await City.find({ country: value.country });
-      const city = country.find((item) => item.city === value.city);
+      const city = await City.findOne({
+        country: value.country,
+        city: value.city,
+      });
       if (city) return res.status(200).json(city);
     } else if (value.country) {
-      const Cities = await City.find({ country: value.country });
+      const Cities = await City.distinct("city", {
+        country: value.country,
+      }).sort();
       if (Cities.length < 1)
         return res.status(400).json({ message: "country not found" });
       return res.status(200).json(Cities);

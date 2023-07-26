@@ -23,10 +23,7 @@ interface c {
 }
 export default function Home() {
   //initial data
-  const url =
-    process.env.NODE_ENV === "production"
-      ? process.env.NEXT_URL
-      : "http://localhost:3000";
+
   const [cityData, setCityData] = useState<city>();
   const [color, setColor] = useState<string[]>();
   const [cityName, setCityName] = useState<string>("Tehran");
@@ -76,9 +73,8 @@ export default function Home() {
     setCountryCode("IR");
     setCountryName("Iran");
     const response = await fetch(`/api/data/?country=Iran`);
-    const currentData = await response.json();
-    const list: string[] = currentData.map((item: any) => item.city);
-    setCityList(list.sort());
+    const list = await response.json();
+    setCityList(list);
     setCityName("Tehran");
     setInfo(await getCity("Tehran", "Iran"));
   };
@@ -114,12 +110,10 @@ export default function Home() {
   //updating city and country list
   const updateLists = async (): Promise<void> => {
     const response = await fetch(`/api/data/?country=${countryName}`);
-    const city: any = await response.json();
-    if (city && city.length > 0) {
-      const currentData: string[] = city.map((item: any) => item.city);
-      const list = currentData.sort();
+    const list: string[] = await response.json();
+    if (list.length > 0) {
       setCityName(list[0]);
-      setCityList(list.sort());
+      setCityList(list);
     }
   };
 
@@ -180,6 +174,7 @@ export default function Home() {
 
   //chart useEffect
   useEffect(() => {
+    console.log(cityList);
     if (info && cityData && cityName) setIsLoading(false);
     if (ctx.current)
       myChart = new Chart(ctx.current, {
@@ -235,9 +230,10 @@ export default function Home() {
     return () => {
       if (myChart) myChart.destroy();
     };
-  }, [countryName, cityName, darkmode, aspect]);
+  }, [cityList, cityName, darkmode, aspect]);
 
-  if (!cityList || !countryList || !cityData || !info) return <Loading />;
+  if (cityList.length < 1 || !countryList || !cityData || !info)
+    return <Loading />;
   return (
     <div className="flex flex-col my-3 lg:w-[66rem] mx-auto">
       <Clock countryCode={countryCode} />
@@ -269,7 +265,7 @@ export default function Home() {
               onChange={(e) => setCityName(e.currentTarget.value)}
             >
               {cityList.map((item, index) => (
-                <option value={item} key={item + index}>
+                <option value={item} key={item + countryName}>
                   {item}
                 </option>
               ))}
