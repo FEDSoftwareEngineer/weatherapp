@@ -174,7 +174,6 @@ export default function Home() {
 
   //chart useEffect
   useEffect(() => {
-    console.log(cityList);
     if (info && cityData && cityName) setIsLoading(false);
     if (ctx.current)
       myChart = new Chart(ctx.current, {
