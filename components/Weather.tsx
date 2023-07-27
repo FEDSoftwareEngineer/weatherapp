@@ -58,10 +58,10 @@ export default function Home() {
     if (value < 50 && value >= 40) return "rgb(77, 0, 38)";
     if (value < 40 && value >= 35) return "rgb(121, 0, 26)";
     if (value < 35 && value >= 30) return "red";
-    if (value < 30 && value >= 25) return "#ffb800";
-    if (value < 25 && value >= 20) return "rgb(168, 197, 0)";
-    if (value < 20 && value >= 15) return "green";
-    if (value < 15 && value >= 10) return "rgb(0, 171, 184)";
+    if (value < 30 && value >= 25) return "#ff7205";
+    if (value < 25 && value >= 20) return "#ffb800";
+    if (value < 20 && value >= 15) return "rgb(168, 197, 0)";
+    if (value < 15 && value >= 10) return "green";
     if (value < 10 && value >= 0) return "rgb(0, 133, 185)";
     if (value < 0 && value >= -20) return "rgb(2, 0, 107)";
     if (value < -20) return "rgb(1, 0, 22)";
@@ -72,7 +72,7 @@ export default function Home() {
   const initialData = async (): Promise<void> => {
     setCountryCode("IR");
     setCountryName("Iran");
-    const response = await fetch(`/api/data/?country=Iran`);
+    const response = await fetch(`/api/cities/?country=Iran`);
     const list = await response.json();
     setCityList(list);
     setCityName("Tehran");
@@ -109,7 +109,7 @@ export default function Home() {
 
   //updating city and country list
   const updateLists = async (): Promise<void> => {
-    const response = await fetch(`/api/data/?country=${countryName}`);
+    const response = await fetch(`/api/cities/?country=${countryName}`);
     const list: string[] = await response.json();
     if (list.length > 0) {
       setCityName(list[0]);
@@ -162,6 +162,7 @@ export default function Home() {
   useEffect(() => {
     const run = async () => {
       setInfo(await getCity(cityName, countryName));
+      setIsLoading(false);
     };
     run();
   }, [cityName]); // cityData data deleted
@@ -170,6 +171,7 @@ export default function Home() {
 
   useEffect(() => {
     updateLists();
+    setIsLoading(true);
   }, [countryName]);
 
   //chart useEffect
@@ -229,13 +231,13 @@ export default function Home() {
     return () => {
       if (myChart) myChart.destroy();
     };
-  }, [cityList, cityName, darkmode, aspect]);
+  }, [cityData, darkmode]);
 
-  if (cityList.length < 1 || !countryList || !cityData || !info)
+  if (cityList.length < 1 || !countryList || !cityData || !info || isLoading)
     return <Loading />;
   return (
     <div className="flex flex-col my-3 lg:w-[66rem] mx-auto">
-      <Clock countryCode={countryCode} />
+      {/* <Clock countryCode={countryCode} /> */}
       <div className="flex justify-center lg:justify-between my-6 lg:mb-0">
         <div className="flex flex-col justify-center items-center lg:items-start">
           {countryList ? (
@@ -286,7 +288,7 @@ export default function Home() {
         </div>
       </div>
 
-      {isLoading ? "" : <canvas id="myChart" ref={ctx}></canvas>}
+      <canvas id="myChart" ref={ctx}></canvas>
 
       <div className="h-32 w-full flex flex-col justify-center items-center lg:hidden">
         <h1>Dark Mode</h1>

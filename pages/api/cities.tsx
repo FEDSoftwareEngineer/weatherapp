@@ -13,10 +13,12 @@ export default async function handler(
   await dbConnect();
   if (req.method === "GET") {
     try {
-      const countries = await City.distinct("country");
-      return res.status(200).json(countries);
+      const cities = await City.distinct("city", {
+        country: req.query.country,
+      });
+      return res.status(200).json(cities);
     } catch (error) {
-      return res
+      res
         .status(500)
         .json({ message: "an error occurred while fetching data" });
     }
