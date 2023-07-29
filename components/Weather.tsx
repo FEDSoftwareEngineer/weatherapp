@@ -43,6 +43,7 @@ export default function Home() {
   const [color, setColor] = useState<string[]>();
   const [cityName, setCityName] = useState<string>("");
   const [countryName, setCountryName] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [countryList, setCountryList] = useState<string[]>([]);
   const [cityList, setCityList] = useState<city[]>([]);
   const [countryCode, setCountryCode] = useState<string>("");
@@ -157,6 +158,7 @@ export default function Home() {
 
   useEffect(() => {
     getCityData();
+    setIsLoading(false);
   }, [cityName]);
 
   const ctx = useRef<HTMLCanvasElement>(null);
@@ -164,6 +166,7 @@ export default function Home() {
 
   useEffect(() => {
     updateLists();
+    setIsLoading(true);
   }, [countryName]);
 
   //chart useEffect
@@ -253,6 +256,7 @@ export default function Home() {
               name=""
               id=""
               value={cityName}
+              disabled={isLoading}
               onChange={(e) => setCityName(e.currentTarget.value)}
             >
               {cityList.map((item) => (

@@ -7,6 +7,6 @@
     @apply dark:bg-slate-800 dark:text-white;
   }
   select {
-    @apply border-2 border-blue-900 rounded-md dark:bg-sky-500 bg-blue-500 text-white focus:outline-none;
+    @apply border-2 border-blue-900 rounded-md dark:bg-sky-500 bg-blue-500 text-white focus:outline-none disabled:bg-sky-800;
   }
 }
