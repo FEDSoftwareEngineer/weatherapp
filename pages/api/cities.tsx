@@ -13,9 +13,7 @@ export default async function handler(
   await dbConnect();
   if (req.method === "GET") {
     try {
-      const cities = await City.distinct("city", {
-        country: req.query.country,
-      });
+      const cities = await City.find({ country: req.query.country });
       return res.status(200).json(cities);
     } catch (error) {
       res
