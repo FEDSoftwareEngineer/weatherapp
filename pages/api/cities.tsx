@@ -13,7 +13,9 @@ export default async function handler(
   await dbConnect();
   if (req.method === "GET") {
     try {
-      const cities = await City.find({ country: req.query.country });
+      const cities = await City.find({ country: req.query.country }).sort({
+        city: 1,
+      });
       return res.status(200).json(cities);
     } catch (error) {
       res

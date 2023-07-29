@@ -230,7 +230,7 @@ export default function Home() {
   if (cityList.length < 1 || !countryList || !cityData) return <Loading />;
   return (
     <div className="flex flex-col my-3 lg:w-[66rem] mx-auto">
-      {/* <Clock countryCode={countryCode} /> */}
+      <Clock countryCode={countryCode} />
       <div className="flex justify-center lg:justify-between my-6 lg:mb-0">
         <div className="flex flex-col justify-center items-center lg:items-start">
           {countryList ? (
