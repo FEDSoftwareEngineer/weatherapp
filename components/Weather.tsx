@@ -242,7 +242,7 @@ const weather: React.FC<weatherProps> = ({ countryList }) => {
             >
               {cityList.map((item) => (
                 <option value={item.city} key={item._id}>
-                  {item.city}
+                  {item.admin_name + " - " + item.city}
                 </option>
               ))}
             </select>

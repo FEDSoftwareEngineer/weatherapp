@@ -14,7 +14,7 @@ export default async function handler(
   if (req.method === "GET") {
     try {
       const cities = await City.find({ country: req.query.country }).sort({
-        city: 1,
+        admin_name: 1,
       });
       return res.status(200).json(cities);
     } catch (error) {
