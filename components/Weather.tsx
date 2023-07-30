@@ -23,20 +23,11 @@ interface city {
   id: number;
 }
 
-const initialCity = {
-  city: "Tehran",
-  city_ascii: "Tehran",
-  lat: 35.7,
-  lng: 51.4167,
-  country: "Iran",
-  iso2: "IR",
-  iso3: "IRN",
-  admin_name: "Tehrān",
-  capital: "primary",
-  population: 13633000,
-  id: 1364305026,
-};
-export default function Home() {
+interface weatherProps {
+  countryList: string[];
+}
+
+const weather: React.FC<weatherProps> = ({ countryList }) => {
   //initial data
 
   const [cityData, setCityData] = useState<temperature>();
@@ -44,22 +35,12 @@ export default function Home() {
   const [cityName, setCityName] = useState<string>("");
   const [countryName, setCountryName] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [countryList, setCountryList] = useState<string[]>([]);
   const [cityList, setCityList] = useState<city[]>([]);
   const [countryCode, setCountryCode] = useState<string>("");
   const [darkmode, setDarkmode] = useState<boolean>(true);
   const [aspect, setAspect] = useState<number>(2.2);
 
-  //color functionalit
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const response = await fetch(`/api/countries`);
-      const data = await response.json();
-      setCountryList(data);
-    };
-    fetchData();
-  }, []);
+  //color functionality
 
   const getColor = (value: number): string => {
     if (value >= 50) return "rgb(49, 0, 39)";
@@ -297,4 +278,6 @@ export default function Home() {
       </div>
     </div>
   );
-}
+};
+
+export default weather;

@@ -1,7 +1,23 @@
 import Head from "next/head";
 import Weather from "../components/Weather";
+import { NextPage } from "next";
 
-export default function Home() {
+interface weatherProps {
+  countryList: string[];
+}
+export const getServerSideProps = async () => {
+  const url =
+    process.env.NODE_ENV === "production"
+      ? process.env.NEXT_URL
+      : "http://localhost:3000";
+
+  const response = await fetch(`${url}/api/countries`);
+  const countryList: string[] = await response.json();
+
+  return { props: { countryList } };
+};
+
+const Home: NextPage<weatherProps> = ({ countryList }) => {
   return (
     <>
       <Head>
@@ -14,8 +30,9 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div className="container mx-auto">
-        <Weather />
+        <Weather countryList={countryList} />
       </div>
     </>
   );
-}
+};
+export default Home;
