@@ -11,6 +11,7 @@ export default async function handler(
   res: NextApiResponse
 ) {
   await dbConnect();
+  await City.collection.createIndex({ country: 1 });
   if (req.method === "GET") {
     try {
       const countries = await City.distinct("country");
