@@ -11,9 +11,13 @@ export default async function handler(
   res: NextApiResponse
 ) {
   await dbConnect();
+  await City.collection.createIndex({ country: 1 });
   if (req.method === "GET") {
     try {
-      const cities = await City.find({ country: req.query.country }).sort({
+      const cities = await City.find(
+        { country: req.query.country },
+        { city: 1, _id: 1, admin_name: 1, lat: 1, lng: 1, iso2: 1, country: 1 }
+      ).sort({
         admin_name: 1,
       });
       return res.status(200).json(cities);

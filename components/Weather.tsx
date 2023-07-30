@@ -11,16 +11,11 @@ interface temperature {
 interface city {
   _id: string;
   city: string;
-  city_ascii: string;
+  country: string;
   lat: number;
   lng: number;
-  country: string;
   iso2: string;
-  iso3: string;
   admin_name: string;
-  capital: string;
-  population: number;
-  id: number;
 }
 
 interface weatherProps {
@@ -242,7 +237,7 @@ const weather: React.FC<weatherProps> = ({ countryList }) => {
             >
               {cityList.map((item) => (
                 <option value={item.city} key={item._id}>
-                  {item.admin_name + " - " + item.city}
+                  {(item.admin_name ? item.admin_name + " - " : "") + item.city}
                 </option>
               ))}
             </select>
