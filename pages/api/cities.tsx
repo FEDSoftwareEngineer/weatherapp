@@ -19,6 +19,7 @@ export default async function handler(
         { city: 1, _id: 1, admin_name: 1, lat: 1, lng: 1, iso2: 1, country: 1 }
       ).sort({
         admin_name: 1,
+        city: 1,
       });
       return res.status(200).json(cities);
     } catch (error) {

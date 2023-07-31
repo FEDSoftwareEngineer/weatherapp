@@ -59,12 +59,16 @@ const weather: React.FC<weatherProps> = ({ countryList }) => {
     const response = await fetch(`/api/cities/?country=Iran`);
     const list = await response.json();
     setCityList(list);
-    setCityName("Tehran");
+    setCityName("Alborz - Kamālshahr");
   };
 
   const getCityData = async (): Promise<void> => {
     try {
-      const currentData = cityList.find((item) => item.city === cityName);
+      const currentData = cityList.find((item) => {
+        if (item.admin_name)
+          return item.admin_name + " - " + item.city === cityName;
+        else return item.city === cityName;
+      });
       if (currentData) {
         setCountryName(currentData.country);
         const response: Response = await fetch(
@@ -95,7 +99,12 @@ const weather: React.FC<weatherProps> = ({ countryList }) => {
     const response = await fetch(`/api/cities/?country=${countryName}`);
     const list: city[] = await response.json();
     if (list.length > 0) {
-      setCityName(list[0].city);
+      const name = list[0].admin_name
+        ? list[0].admin_name + " - " + list[0].city
+        : list[0].city;
+      console.log(list);
+      console.log(name);
+      setCityName(name);
       setCityList(list);
     }
   };
@@ -154,7 +163,7 @@ const weather: React.FC<weatherProps> = ({ countryList }) => {
           labels: cityData ? cityData.time : [],
           datasets: [
             {
-              label: cityName + " - " + countryName,
+              label: cityName + " / " + countryName,
               data: cityData ? cityData.temperature_2m : [],
               backgroundColor: color,
               borderWidth: 1,
@@ -236,7 +245,14 @@ const weather: React.FC<weatherProps> = ({ countryList }) => {
               onChange={(e) => setCityName(e.currentTarget.value)}
             >
               {cityList.map((item) => (
-                <option value={item.city} key={item._id}>
+                <option
+                  value={
+                    item.admin_name
+                      ? item.admin_name + " - " + item.city
+                      : item.city
+                  }
+                  key={item._id}
+                >
                   {(item.admin_name ? item.admin_name + " - " : "") + item.city}
                 </option>
               ))}
