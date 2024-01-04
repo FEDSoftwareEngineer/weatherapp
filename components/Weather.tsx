@@ -39,15 +39,15 @@ const weather: React.FC<weatherProps> = ({ countryList }) => {
 
   const getColor = (value: number): string => {
     if (value >= 50) return "rgb(49, 0, 39)";
-    if (value < 50 && value >= 40) return "rgb(77, 0, 38)";
-    if (value < 40 && value >= 35) return "rgb(121, 0, 26)";
-    if (value < 35 && value >= 30) return "red";
-    if (value < 30 && value >= 25) return "#ff7205";
-    if (value < 25 && value >= 20) return "#ffb800";
-    if (value < 20 && value >= 15) return "rgb(168, 197, 0)";
-    if (value < 15 && value >= 10) return "green";
-    if (value < 10 && value >= 0) return "rgb(0, 133, 185)";
-    if (value < 0 && value >= -20) return "rgb(2, 0, 107)";
+    if (value < 50 && value >= 40) return "rgb(121, 0, 26)";
+    if (value < 40 && value >= 35) return "red";
+    if (value < 35 && value >= 30) return "#ff7205";
+    if (value < 30 && value >= 25) return "#ffb800";
+    if (value < 25 && value >= 20) return "rgb(168, 197, 0)";
+    if (value < 20 && value >= 15) return "green";
+    if (value < 15 && value >= 10) return "rgb(0, 133, 185)";
+    if (value < 10 && value >= 0) return "rgb(2, 0, 107)";
+    if (value < 0 && value >= -20) return "rgb(0, 204, 255)";
     if (value < -20) return "rgb(1, 0, 22)";
     return "";
   };

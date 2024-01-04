@@ -9,4 +9,7 @@
   select {
     @apply border-2 border-blue-900 rounded-md dark:bg-sky-500 bg-blue-500 text-white focus:outline-none disabled:bg-sky-800;
   }
+  .bg {
+    color: rgb(0, 204, 255);
+  }
 }
